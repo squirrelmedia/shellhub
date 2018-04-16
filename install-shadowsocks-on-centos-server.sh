@@ -169,7 +169,7 @@ else
   intro
   config
   yum update -y && yum upgrade -y
-  yum install python-setuptools && easy_install pip
+  yum install python-setuptools -y && easy_install pip -y
   pip install shadowsocks
   addTcpPort ${server_port}
   # run background
