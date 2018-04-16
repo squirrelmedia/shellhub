@@ -137,7 +137,7 @@ containsIgnoreCase(){
 
 addTcpPort(){
   tcpPort=${1}
-  cat /etc/*elease | grep -q VERSION_ID=\"14.04\"
+  cat /etc/*elease | grep -q VERSION_ID=\"7\"
   if [[ $? = 0 ]]; then
     firewall-cmd --zone=public --add-port=${tcpPort}/tcp --permanent
     firewall-cmd --reload
