@@ -100,8 +100,8 @@ main()
     SECRET=$(head -c 16 /dev/urandom | xxd -ps)
     echo $SECRET
   fi
-  ./mtproto-proxy -u nobody -p 3333 -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1
-  if [[ ! $? -eq 0 ]]; then
+  nohup ./mtproto-proxy -u nobody -p 3333 -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1 &
+  if [[ $? -eq 0 ]]; then
     complete
   else
     echo "Sorry, Install failed"
