@@ -85,6 +85,8 @@ complete()
   echo -e "* Server : ${GREEN}${IP_ADDRESS}${NR}"
   echo -e "* Port   : ${GREEN}${SERVER_PORT}${NR}"
   echo -e "* Secret : ${GREEN}${SECRET}${NR}"
+  echo -e "${GREEN}***************************************************${NR}"
+  echo
   echo -e "Here is a link to your proxy server:\n${GREEN}https://t.me/proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
   echo
   echo -e "And here is a direct link for those who have the Telegram app installed:\n${GREEN}tg://proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
