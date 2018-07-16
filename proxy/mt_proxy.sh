@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-GREEN='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 init_release(){
@@ -100,11 +100,8 @@ main()
     SECRET=$(head -c 16 /dev/urandom | xxd -ps)
     echo $SECRET
   fi
-  nohup ./mtproto-proxy -u nobody -p 3333 -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1 &
-  if [[ $? -eq 0 ]]; then
-    complete
-  else
-    echo "Sorry, Install failed"
-  fi
+  # JUST SET LOCAL PORT = SERVER_PORT + 10, YOU CAN SET ANY YOU WANT
+  nohup ./mtproto-proxy -u nobody -p $(`expr ${SERVER_PORT} + 10`) -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1 &
+  complete
 }
 main
