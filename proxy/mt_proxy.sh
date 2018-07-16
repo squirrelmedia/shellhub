@@ -68,6 +68,14 @@ compile_source()
   fi
 }
 
+get_unused_port()
+{
+  for UNUSED_PORT in $(seq $1 65000); do
+    echo -ne "\035" | telnet 127.0.0.1 $UNUSED_PORT > /dev/null 2>&1
+    [ $? -eq 1 ] && echo "unused $UNUSED_PORT" && break
+  done
+}
+
 complete()
 {
   IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
@@ -93,15 +101,17 @@ main()
   curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
   clear
   echo
-  read -p "Input server port:" SERVER_PORT
-  echo $SERVER_PORT
+  read -p "Input server port (defalut: Auto Generated):" SERVER_PORT
+  if [[ -z ${SERVER_PORT} ]]; then
+    get_unused_port 1079
+    SERVER_PORT=$UNUSED_PORT
+  fi
   read -p "Input secret (defalut: Auto Generated)：" SECRET
   if [[ -z ${SECRET} ]]; then
     SECRET=$(head -c 16 /dev/urandom | xxd -ps)
-    echo $SECRET
   fi
-  # JUST SET LOCAL PORT = SERVER_PORT + 10, YOU CAN SET ANY YOU WANT
-  nohup ./mtproto-proxy -u nobody -p $(`expr ${SERVER_PORT} + 10`) -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1 &
+  get_unused_port `expr $SERVER_PORT + 1`
+  nohup ./mtproto-proxy -u nobody -p ${UNUSED_PORT} -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1 &
   complete
 }
 main

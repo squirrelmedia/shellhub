@@ -38,3 +38,11 @@ init_release(){
   fi
   echo $pkg
 }
+
+get_unused_port()
+{
+  for UNUSED_PORT in $(seq $1 65000); do
+    echo -ne "\035" | telnet 127.0.0.1 $UNUSED_PORT > /dev/null 2>&1
+    [ $? -eq 1 ] && break
+  done
+}
