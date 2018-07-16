@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+GREEN='\033[0;31m'
+NC='\033[0m' # No Color
+
 init_release(){
   if [ -f /etc/os-release ]; then
       # freedesktop.org and systemd
@@ -65,18 +68,43 @@ compile_source()
   fi
 }
 
+complete()
+{
+  IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+  clear
+  echo
+  echo -e "${GREEN}***************************************************${NR}"
+  echo -e "* Server : ${GREEN}${IP_ADDRESS}${NR}"
+  echo -e "* Port   : ${GREEN}${SERVER_PORT}${NR}"
+  echo -e "* Secret : ${GREEN}${SECRET}${NR}"
+  echo -e "Here is a link to your proxy server:\n${GREEN}https://t.me/proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
+  echo
+  echo -e "And here is a direct link for those who have the Telegram app installed:\n${GREEN}tg://proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
+  echo -e "${GREEN}***************************************************${NR}"
+  echo
+}
+
+
 main()
 {
   install_dependency
   compile_source
   curl -s https://core.telegram.org/getProxySecret -o proxy-secret
   curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
-  SECRET=$(head -c 16 /dev/urandom | xxd -ps)
-
+  clear
+  echo
   read -p "Input server port:" SERVER_PORT
   echo $SERVER_PORT
-  # read -p "Input secret (defalut $SERVER_PORT)：" SECRET
-  # echo $SECRET
-  ./mtproto-proxy -u nobody -p 8888 -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1
+  read -p "Input secret (defalut: Auto Generated)：" SECRET
+  if [[ -z ${SECRET} ]]; then
+    SECRET=$(head -c 16 /dev/urandom | xxd -ps)
+    echo $SECRET
+  fi
+  ./mtproto-proxy -u nobody -p 3333 -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1
+  if [[ ! $? -eq 0 ]]; then
+    complete
+  else
+    echo "Sorry, Install failed"
+  fi
 }
 main
