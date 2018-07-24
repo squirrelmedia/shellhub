@@ -47,6 +47,18 @@ isRoot() {
   fi
 }
 
+get_unused_port()
+{
+  if [ $# -eq 0 ]
+    then
+      $1=3333
+  fi
+  for UNUSED_PORT in $(seq $1 65000); do
+    echo -ne "\035" | telnet 127.0.0.1 $UNUSED_PORT > /dev/null 2>&1
+    [ $? -eq 1 ] && break
+  done
+}
+
 config(){
 
   # config encryption password
@@ -58,7 +70,8 @@ config(){
 
   # config server port
   while [[ true ]]; do
-    local port=$(shuf -i 2000-65000 -n 1)
+    get_unused_port $(shuf -i 2000-65000 -n 1)
+    local port=${UNUSED_PORT}
     read -p "Server port(1-65535) (Default: ${port}):" server_port
     if [[ -z "${server_port}" ]]; then
       server_port=${port}
