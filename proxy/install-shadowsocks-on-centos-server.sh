@@ -162,12 +162,19 @@ addTcpPort(){
 
 # show install success information
 successInfo(){
+  IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
   clear
   echo
   echo "Install completed"
+  echo -e "ip_address:\t${GREEN_COLOR}${IP_ADDRESS}${NO_COLOR}"
   echo -e "server_port:\t${GREEN_COLOR}${server_port}${NO_COLOR}"
-  echo -e "password:\t${GREEN_COLOR}${sspwd}${NO_COLOR}"
   echo -e "encryption:\t${GREEN_COLOR}${encryption_method}${NO_COLOR}"
+  echo -e "password:\t${GREEN_COLOR}${sspwd}${NO_COLOR}"
+  ss_link=$(echo ${encryption_method}:${sspwd}@${IP_ADDRESS}:${server_port} | base64)
+  ss_link="ss://${ss_link}"
+  echo -e "ss_link:\t${GREEN_COLOR}${ss_link}${NO_COLOR}"
+  #pip install qrcode
+  echo -n "ss://"`echo -n ${encryption_method}:${sspwd}@${IP_ADDRESS}:${server_port} | base64` | qr
   echo -e "visit:\t\t${GREEN_COLOR}https://www.github.com/shellhub${NO_COLOR}"
   echo
 }
@@ -187,7 +194,7 @@ main(){
     pip install shadowsocks
     addTcpPort ${server_port}
     # run background
-    nohup ssserver -c /etc/shadowsocks.json &
+    nohup ssserver -c /etc/shadowsocks.json & > /dev/null 2>&1
     successInfo
   fi
 }
