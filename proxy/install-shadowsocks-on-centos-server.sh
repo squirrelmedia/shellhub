@@ -32,7 +32,7 @@ intro() {
   clear
   echo
   echo "******************************************************"
-  echo "* OS     : CentOS                                    *"
+  echo "* OS     : Debian Ubuntu CentOS                                    *"
   echo "* Desc   : auto install shadowsocks on CentOS server *"
   echo "* Author : https://github.com/shellhub               *"
   echo "******************************************************"
@@ -159,20 +159,24 @@ successInfo(){
   echo
 }
 
-#check root permission
-isRoot=$( isRoot )
+main(){
+  #check root permission
+  isRoot=$( isRoot )
 
-if [[ "${isRoot}" != "true" ]]; then
-  echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
-  exit 1
-else
-  intro
-  config
-  yum update -y && yum upgrade -y
-  yum install python-setuptools -y && easy_install pip -y
-  pip install shadowsocks
-  addTcpPort ${server_port}
-  # run background
-  nohup ssserver -c /etc/shadowsocks.json &
-  successInfo
-fi
+  if [[ "${isRoot}" != "true" ]]; then
+    echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
+    exit 1
+  else
+    intro
+    config
+    yum update -y && yum upgrade -y
+    yum install python-setuptools -y && easy_install pip -y
+    pip install shadowsocks
+    addTcpPort ${server_port}
+    # run background
+    nohup ssserver -c /etc/shadowsocks.json &
+    successInfo
+  fi
+}
+
+main
