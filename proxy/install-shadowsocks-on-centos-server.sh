@@ -173,9 +173,9 @@ successInfo(){
   ss_link=$(echo ${encryption_method}:${sspwd}@${IP_ADDRESS}:${server_port} | base64)
   ss_link="ss://${ss_link}"
   echo -e "ss_link:\t${GREEN_COLOR}${ss_link}${NO_COLOR}"
-  #pip install qrcode
+  # pip install qrcode
   echo -n "ss://"`echo -n ${encryption_method}:${sspwd}@${IP_ADDRESS}:${server_port} | base64` | qr
-  echo -e "visit:\t\t${GREEN_COLOR}https://www.github.com/shellhub${NO_COLOR}"
+  echo -e "visit:\t\t${GREEN_COLOR}https://www.github.com/shellhub/shellhub${NO_COLOR}"
   echo
 }
 
