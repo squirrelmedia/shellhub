@@ -50,3 +50,25 @@ get_unused_port()
     [ $? -eq 1 ] && break
   done
 }
+
+# check a software has installed
+check_in_path(){
+  command=$0
+  command 2>&1 >/dev/null
+  if [[ $? -eq 0 ]]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+stop_firewall(){
+  if [[ ${PM} = "apt" ]]; then
+    ufw stop
+    ufw disable
+  elif [[ ${PM} = "yum" ]]; then
+    #statements
+    systemctl stop firewalld
+    systemctl disable firewalld
+  fi
+}
