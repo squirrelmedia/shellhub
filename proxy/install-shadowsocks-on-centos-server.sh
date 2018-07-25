@@ -27,6 +27,44 @@ ciphers=(
 # current/working directory
 CUR_DIR=`pwd`
 
+init_release(){
+  if [ -f /etc/os-release ]; then
+      # freedesktop.org and systemd
+      . /etc/os-release
+      OS=$NAME
+  elif type lsb_release >/dev/null 2>&1; then
+      # linuxbase.org
+      OS=$(lsb_release -si)
+  elif [ -f /etc/lsb-release ]; then
+      # For some versions of Debian/Ubuntu without lsb_release command
+      . /etc/lsb-release
+      OS=$DISTRIB_ID
+  elif [ -f /etc/debian_version ]; then
+      # Older Debian/Ubuntu/etc.
+      OS=Debian
+  elif [ -f /etc/SuSe-release ]; then
+      # Older SuSE/etc.
+      ...
+  elif [ -f /etc/redhat-release ]; then
+      # Older Red Hat, CentOS, etc.
+      ...
+  else
+      # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+      OS=$(uname -s)
+  fi
+
+  # convert string to lower case
+  OS=`echo "$OS" | tr '[:upper:]' '[:lower:]'`
+
+  if [[ $OS = *'ubuntu'* || $OS = *'debian'* ]]; then
+    PM='apt'
+  elif [[ $OS = *'centos'* ]]; then
+    PM='yum'
+  else
+    exit 1
+  fi
+}
+
 # script introduction
 intro() {
   clear
@@ -179,22 +217,63 @@ successInfo(){
   echo
 }
 
+# check a software has installed
+check_in_path(){
+  command=$0
+  command 2>&1 >/dev/null
+  if [[ $? -eq 0 ]]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+# install shadowsocks
+install_shadowsocks(){
+  # init package manager
+  init_release
+  if [[ $( check_in_path sslocal ) = "false" ]]; then
+    #statements
+    if [[ ${PM} = "apt" ]]; then
+      if [[ $( check_in_path pip ) = "false" ]]; then
+        apt-get install python-pip -y
+      fi
+      pip install shadowsocks -y
+    elif [[ ${PM} = "yum" ]]; then
+      if [[ $( check_in_path pip ) = "false" ]]; then
+        yum install python-setuptools && easy_install pip
+      fi
+      pip install shadowsocks
+    fi
+  fi
+}
+
+# stop firewall
+stop_firewall(){
+  if [[ ${PM} = "apt" ]]; then
+    ufw disable 2>&1 >/dev/null
+  elif [[ ${PM} = "yum" ]]; then
+    #statements
+    systemctl stop firewalld 2>&1 >/dev/null
+    systemctl disable firewalld 2>&1 >/dev/null
+  fi
+}
+
 main(){
+
   #check root permission
   isRoot=$( isRoot )
-
   if [[ "${isRoot}" != "true" ]]; then
     echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
     exit 1
   else
     intro
     config
-    yum update -y && yum upgrade -y
-    yum install python-setuptools -y && easy_install pip -y
-    pip install shadowsocks
-    addTcpPort ${server_port}
+    install_shadowsocks
+    #addTcpPort ${server_port}
+    stop_firewall
     # run background
-    nohup ssserver -c /etc/shadowsocks.json & > /dev/null 2>&1
+    `ssserver -c /etc/shadowsocks.json --user nobody -d start` >/dev/null
     successInfo
   fi
 }
