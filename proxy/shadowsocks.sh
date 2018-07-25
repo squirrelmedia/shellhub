@@ -70,7 +70,7 @@ intro() {
   clear
   echo
   echo "******************************************************"
-  echo "* OS     : Debian Ubuntu CentOS                                    *"
+  echo "* OS     : Debian Ubuntu CentOS                      *"
   echo "* Desc   : auto install shadowsocks on CentOS server *"
   echo "* Author : https://github.com/shellhub               *"
   echo "******************************************************"
