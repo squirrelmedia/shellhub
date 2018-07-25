@@ -27,14 +27,53 @@ ciphers=(
 # current/working directory
 CUR_DIR=`pwd`
 
+init_release(){
+  if [ -f /etc/os-release ]; then
+      # freedesktop.org and systemd
+      . /etc/os-release
+      OS=$NAME
+  elif type lsb_release >/dev/null 2>&1; then
+      # linuxbase.org
+      OS=$(lsb_release -si)
+  elif [ -f /etc/lsb-release ]; then
+      # For some versions of Debian/Ubuntu without lsb_release command
+      . /etc/lsb-release
+      OS=$DISTRIB_ID
+  elif [ -f /etc/debian_version ]; then
+      # Older Debian/Ubuntu/etc.
+      OS=Debian
+  elif [ -f /etc/SuSe-release ]; then
+      # Older SuSE/etc.
+      ...
+  elif [ -f /etc/redhat-release ]; then
+      # Older Red Hat, CentOS, etc.
+      ...
+  else
+      # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+      OS=$(uname -s)
+  fi
+
+  # convert string to lower case
+  OS=`echo "$OS" | tr '[:upper:]' '[:lower:]'`
+
+  if [[ $OS = *'ubuntu'* || $OS = *'debian'* ]]; then
+    PM='apt'
+  elif [[ $OS = *'centos'* ]]; then
+    PM='yum'
+  else
+    exit 1
+  fi
+}
+
 # script introduction
 intro() {
   clear
-  echo "*************************************************"
-  echo "* OS     : Centos Debian Ubuntu                 *"
-  echo "* Desc   : auto install shadowsocks             *"
-  echo "* Author : https://github.com/shellhub          *"
-  echo "*************************************************"
+  echo
+  echo "******************************************************"
+  echo "* OS     : Debian Ubuntu CentOS                                    *"
+  echo "* Desc   : auto install shadowsocks on CentOS server *"
+  echo "* Author : https://github.com/shellhub               *"
+  echo "******************************************************"
   echo
 }
 
@@ -44,6 +83,18 @@ isRoot() {
   else
     echo "true"
   fi
+}
+
+get_unused_port()
+{
+  if [ $# -eq 0 ]
+    then
+      $1=3333
+  fi
+  for UNUSED_PORT in $(seq $1 65000); do
+    echo -ne "\035" | telnet 127.0.0.1 $UNUSED_PORT > /dev/null 2>&1
+    [ $? -eq 1 ] && break
+  done
 }
 
 config(){
@@ -57,7 +108,8 @@ config(){
 
   # config server port
   while [[ true ]]; do
-    local port=$(shuf -i 2000-65000 -n 1)
+    get_unused_port $(shuf -i 2000-65000 -n 1)
+    local port=${UNUSED_PORT}
     read -p "Server port(1-65535) (Default: ${port}):" server_port
     if [[ -z "${server_port}" ]]; then
       server_port=${port}
@@ -105,46 +157,28 @@ config(){
       break
     fi
   done
+  # add shadowsocks config file
+  cat <<EOT > /etc/shadowsocks.json
+{
+  "server":"0.0.0.0",
+  "server_port":${server_port},
+  "local_address": "127.0.0.1",
+  "local_port":1080,
+  "password":"${sspwd}",
+  "timeout":300,
+  "method":"${encryption_method}",
+  "fast_open": false
 }
-
-getOS(){
-  #!/usr/bin/env bash
-
-  if [ -f /etc/os-release ]; then
-      # freedesktop.org and systemd
-      . /etc/os-release
-      OS=$NAME
-      VER=$VERSION_ID
-  elif type lsb_release >/dev/null 2>&1; then
-      # linuxbase.org
-      OS=$(lsb_release -si)
-      VER=$(lsb_release -sr)
-  elif [ -f /etc/lsb-release ]; then
-      # For some versions of Debian/Ubuntu without lsb_release command
-      . /etc/lsb-release
-      OS=$DISTRIB_ID
-      VER=$DISTRIB_RELEASE
-  elif [ -f /etc/debian_version ]; then
-      # Older Debian/Ubuntu/etc.
-      OS=Debian
-      VER=$(cat /etc/debian_version)
-  else
-      # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-      OS=$(uname -s)
-      VER=$(uname -r)
-  fi
-
-  echo ${OS}
-  #echo ${VER}
+EOT
 }
-
 
 containsIgnoreCase(){
   # convert arg1 to lower case
   str=`echo "$1" | tr '[:upper:]' '[:lower:]'`
   # convert arg2 to lower case
   searchStr=`echo "$2" | tr '[:upper:]' '[:lower:]'`
-
+  echo ${1}
+  echo ${2}
   if [[ ${str} = *${searchStr}* ]]; then
     echo "true"
   else
@@ -152,22 +186,96 @@ containsIgnoreCase(){
   fi
 }
 
-#check root permission
-isRoot=$( isRoot )
-
-if [[ "${isRoot}" != "true" ]]; then
-  echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
-  exit 1
-else
-  intro
-  config
-  os=$( getOS )
-  if [[ $( containsIgnoreCase ${os} "ubuntu" ) = "true" ]]; then
-    systemPackage="apt-get"
-  elif [[ $( containsIgnoreCase ${os} "debian" ) = "true" ]]; then
-    systemPackage="apt"
+addTcpPort(){
+  tcpPort=${1}
+  cat /etc/*elease | grep -q VERSION_ID=\"7\"
+  if [[ $? = 0 ]]; then
+    firewall-cmd --zone=public --add-port=${tcpPort}/tcp --permanent
+    firewall-cmd --reload
   else
-    systemPackage="yum"
+    iptables -I INPUT -p tcp -m tcp --dport ${tcpPort} -j ACCEPT
+    service iptables save
   fi
-  ${systemPackage} update -y && ${systemPackage} upgrade -y
-fi
+}
+
+# show install success information
+successInfo(){
+  IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+  clear
+  echo
+  echo "Install completed"
+  echo -e "ip_address:\t${GREEN_COLOR}${IP_ADDRESS}${NO_COLOR}"
+  echo -e "server_port:\t${GREEN_COLOR}${server_port}${NO_COLOR}"
+  echo -e "encryption:\t${GREEN_COLOR}${encryption_method}${NO_COLOR}"
+  echo -e "password:\t${GREEN_COLOR}${sspwd}${NO_COLOR}"
+  ss_link=$(echo ${encryption_method}:${sspwd}@${IP_ADDRESS}:${server_port} | base64)
+  ss_link="ss://${ss_link}"
+  echo -e "ss_link:\t${GREEN_COLOR}${ss_link}${NO_COLOR}"
+  # pip install qrcode
+  echo -n "ss://"`echo -n ${encryption_method}:${sspwd}@${IP_ADDRESS}:${server_port} | base64` | qr
+  echo -e "visit:\t\t${GREEN_COLOR}https://www.github.com/shellhub/shellhub${NO_COLOR}"
+  echo
+}
+
+# check a software has installed
+check_in_path(){
+  command=$0
+  command 2>&1 >/dev/null
+  if [[ $? -eq 0 ]]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+# install shadowsocks
+install_shadowsocks(){
+  # init package manager
+  init_release
+  if [[ $( check_in_path sslocal ) = "false" ]]; then
+    #statements
+    if [[ ${PM} = "apt" ]]; then
+      if [[ $( check_in_path pip ) = "false" ]]; then
+        apt-get install python-pip -y
+      fi
+      pip install shadowsocks -y
+    elif [[ ${PM} = "yum" ]]; then
+      if [[ $( check_in_path pip ) = "false" ]]; then
+        yum install python-setuptools && easy_install pip
+      fi
+      pip install shadowsocks
+    fi
+  fi
+}
+
+# stop firewall
+stop_firewall(){
+  if [[ ${PM} = "apt" ]]; then
+    ufw disable 2>&1 >/dev/null
+  elif [[ ${PM} = "yum" ]]; then
+    #statements
+    systemctl stop firewalld 2>&1 >/dev/null
+    systemctl disable firewalld 2>&1 >/dev/null
+  fi
+}
+
+main(){
+
+  #check root permission
+  isRoot=$( isRoot )
+  if [[ "${isRoot}" != "true" ]]; then
+    echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
+    exit 1
+  else
+    intro
+    config
+    install_shadowsocks
+    #addTcpPort ${server_port}
+    stop_firewall
+    # run background
+    `ssserver -c /etc/shadowsocks.json --user nobody -d start` >/dev/null
+    successInfo
+  fi
+}
+
+main
