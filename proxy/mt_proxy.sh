@@ -22,7 +22,7 @@ init_release(){
       ...
   elif [ -f /etc/redhat-release ]; then
       # Older Red Hat, CentOS, etc.
-      ...
+      OS="CentOS"
   else
       # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
       OS=$(uname -s)
