@@ -12,3 +12,4 @@ Third party
 
 * [docker](docker)
 * [docker-compose](docker-compose)
+* [oh-my-zsh](oh-my-zsh)
