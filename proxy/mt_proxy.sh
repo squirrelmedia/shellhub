@@ -45,10 +45,12 @@ install_dependency()
   init_release
   if [[ $PM = 'apt' ]]; then
     apt install git curl build-essential libssl-dev zlib1g-dev -y
+    apt install net-tools -y
   elif [[ $PM = 'yum' ]]; then
     #statements
     yum install openssl-devel zlib-devel -y
     yum groupinstall "Development Tools" -y
+    yum install net-tools -y
   fi
 }
 
