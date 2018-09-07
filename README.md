@@ -1,9 +1,9 @@
-[MTProxy](proxy/mt_proxy.md)
+[MTProxy for Telegram](https://github.com/shellhub/blog/issues/12)
 ``` bash
 wget -N --no-check-certificate https://raw.githubusercontent.com/shellhub/shellhub/master/proxy/mt_proxy.sh && chmod +x mt_proxy.sh && ./mt_proxy.sh
 ```
 
-# [Shadowsocks](proxy/shadowsocks.md)
+[Shadowsocks](https://github.com/shellhub/blog/issues/18)
 ``` bash
 wget -N --no-check-certificate https://raw.githubusercontent.com/shellhub/shellhub/master/proxy/shadowsocks.sh && chmod +x shadowsocks.sh && ./shadowsocks.sh
 ```
