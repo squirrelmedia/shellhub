@@ -200,7 +200,7 @@ addTcpPort(){
 
 # show install success information
 successInfo(){
-  IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+  IP_ADDRESS=$(dig +short myip.opendns.com @resolver1.opendns.com)
   clear
   echo
   echo "Install completed"
@@ -217,35 +217,19 @@ successInfo(){
   echo
 }
 
-# check a software has installed
-check_in_path(){
-  command=$0
-  command 2>&1 >/dev/null
-  if [[ $? -eq 0 ]]; then
-    echo "true"
-  else
-    echo "false"
-  fi
-}
-
 # install shadowsocks
 install_shadowsocks(){
   # init package manager
   init_release
-  if [[ $( check_in_path sslocal ) = "false" ]]; then
-    #statements
-    if [[ ${PM} = "apt" ]]; then
-      if [[ $( check_in_path pip ) = "false" ]]; then
-        apt-get install python-pip -y
-      fi
-      pip install shadowsocks -y
-    elif [[ ${PM} = "yum" ]]; then
-      if [[ $( check_in_path pip ) = "false" ]]; then
-        yum install python-setuptools && easy_install pip
-      fi
-      pip install shadowsocks
-    fi
+  #statements
+  if [[ ${PM} = "apt" ]]; then
+    apt-get install dnsutils -y
+    apt-get install python-pip -y
+  elif [[ ${PM} = "yum" ]]; then
+    yum install bind-utils -y
+    yum install python-setuptools -y && easy_install pip
   fi
+  pip install shadowsocks
 }
 
 # stop firewall
