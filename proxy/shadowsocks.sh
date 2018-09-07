@@ -224,9 +224,11 @@ install_shadowsocks(){
   #statements
   if [[ ${PM} = "apt" ]]; then
     apt-get install dnsutils -y
+    apt install net-tools -y
     apt-get install python-pip -y
   elif [[ ${PM} = "yum" ]]; then
     yum install bind-utils -y
+    yum install net-tools -y
     yum install python-setuptools -y && easy_install pip
   fi
   pip install shadowsocks
