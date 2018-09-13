@@ -44,19 +44,16 @@ install_dependency()
 {
   init_release
   if [[ $PM = 'apt' ]]; then
-    apt install git curl build-essential libssl-dev zlib1g-dev -y
-    apt install net-tools -y
+    apt install git curl build-essential libssl-dev zlib1g-dev vim-common net-tools telnet -y
   elif [[ $PM = 'yum' ]]; then
-    #statements
-    yum install openssl-devel zlib-devel -y
+    yum install openssl-devel zlib-devel telnet telnet-server net-tools vim-common -y
     yum groupinstall "Development Tools" -y
-    yum install net-tools -y
   fi
 }
 
 compile_source()
 {
-  git --version 2>&1 >/dev/null # improvement by tripleee
+  git --version 2>&1 >/dev/null
   GIT_IS_AVAILABLE=$?
   if [[ $GIT_IS_AVAILABLE -eq 0 ]]; then
     if [[ ! -d "MTProxy" ]]; then
