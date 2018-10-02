@@ -93,6 +93,15 @@ complete()
   echo
 }
 
+stop_firewall(){
+  if [[ ${PM} = "apt" ]]; then
+    ufw disable 2>&1 >/dev/null
+  elif [[ ${PM} = "yum" ]]; then
+    #statements
+    systemctl stop firewalld 2>&1 >/dev/null
+    systemctl disable firewalld 2>&1 >/dev/null
+  fi
+}
 
 main()
 {
@@ -112,6 +121,7 @@ main()
     SECRET=$(head -c 16 /dev/urandom | xxd -ps)
   fi
   get_unused_port `expr $SERVER_PORT + 1`
+  stop_firewall
   nohup ./mtproto-proxy -u nobody -p ${UNUSED_PORT} -H ${SERVER_PORT} -S ${SECRET} --aes-pwd proxy-secret proxy-multi.conf -M 1 &
   complete
 }
