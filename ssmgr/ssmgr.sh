@@ -70,7 +70,9 @@ install_shadowsocks(){
 }
 
 config(){
-  #download config file
+  # download template file
+  wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ss.template.yml
+  wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/webgui.template.yml
 
   # write webgui password
   read -p "Input webgui manage password:" password
