@@ -123,7 +123,7 @@ main(){
     echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
     exit 1
   else
-    go_workspace()
+    go_workspace
     install_shadowsocks
     install_ssmgr
     config
