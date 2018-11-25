@@ -99,10 +99,10 @@ config(){
   echo "alipay_appid=${alipay_appid}" >> config
 
   read -p "Input alipay_private_key:" alipay_private_key
-  echo "alipay_private_key=${alipay_private_key}"
+  echo "alipay_private_key=${alipay_private_key}" >> config
 
   read -p "Input alipay_public_key:" alipay_public_key
-  echo "alipay_public_key=${alipay_public_key}"
+  echo "alipay_public_key=${alipay_public_key}" >> config
 
   # generate webgui.yml
   config=`cat ./config`
