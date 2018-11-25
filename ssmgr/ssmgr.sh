@@ -72,46 +72,30 @@ install_shadowsocks(){
 config(){
   #download config file
 
-  #modify config ss.yml
-  CONFIG_FILE=ss.yml
-  TARGET_KEY=password
-  read -p "Type webgui manage passwor('')d:" TARGET_VALUE
-  #quote('') VALUE
-  TARGET_VALUE=\'$TARGET_VALUE\'
-  sed  -i "s/\($TARGET_KEY *: *\).*/\1$TARGET_VALUE/" $CONFIG_FILE
+  # write webgui password
+  read -p "Input webgui manage password:" password
+  echo "password=${password}" >> config
 
-  #config manager password
-  CONFIG_FILE=webgui.yml
-  sed  -i "s/\($TARGET_KEY *: *\).*/\1$TARGET_VALUE/" $CONFIG_FILE
-  #config ip address
-  TARGET_KEY=address
-  IP_ADDRESS=$(dig +short myip.opendns.com @resolver1.opendns.com)
-  sed  -i "s/\($TARGET_KEY *: *\).*/\1$IP_ADDRESS/" $CONFIG_FILE
+  # generate ss.yml
+  config=`cat ./config`
+  templ=`cat ./ss.template.yml`
+  printf "$config\ncat << EOF\n$templ\nEOF" | bash > ss.yml
 
-  # config email.username
-  read -p "Input your email username:" email_username
-  TARGET_KEY=username
-  # quote email username
-  TARGET_VALUE=\'${email_username}\'
-  sed  -i "s/\($TARGET_KEY *: *\).*/\1$TARGET_VALUE/" $CONFIG_FILE
+  # write ip address
+  echo "IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >> config
 
-  # config email.password
-  # sed -r 's/^(\s*)(email\s*:\s*password\s*$)/\1email: password/dyclogin' $CONFIG_FILE
+  # write email username
+  read -p "Input your email address:" email_username
+  echo "email_username=${email_username}" >> config
 
-  # config host
-  TARGET_KEY=host
-  TARGET_VALUE=$(dig +short myip.opendns.com @resolver1.opendns.com)
-  #quote host value
-  TARGET_VALUE=\'${TARGET_VALUE}\'
-  sed  -i "s/\($TARGET_KEY *: *\).*/\1$TARGET_VALUE/" $CONFIG_FILE
+  # write email password
+  read -p "Input your email password:" email_password
+  echo "email_password=${email_password}" >> config
 
-  # config site
-  TARGET_KEY=site
-  TARGET_VALUE=$(dig +short myip.opendns.com @resolver1.opendns.com)
-  #quote host value
-  HTTP="http:\/\/"
-  TARGET_VALUE=\'${HTTP}${TARGET_VALUE}\'
-  sed  -i "s/\($TARGET_KEY *: *\).*/\1$TARGET_VALUE/" $CONFIG_FILE
+  # generate webgui.yml
+  config=`cat ./config`
+  templ=`cat ./webgui.template.yml`
+  printf "$config\ncat << EOF\n$templ\nEOF" | bash > webgui.yml
 
 }
 
@@ -139,6 +123,7 @@ main(){
     echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
     exit 1
   else
+    go_workspace()
     install_shadowsocks
     install_ssmgr
     config
