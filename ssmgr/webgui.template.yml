@@ -39,11 +39,11 @@ plugins:
 
   alipay:
     # 如果不使用支付宝，这段可以去掉
-    use: false
-    appid: 2015012108272442
-    notifyUrl: 'http://yourwebsite.com/api/user/alipay/callback'
-    merchantPrivateKey: 'xxxxxxxxxxxx'
-    alipayPublicKey: 'xxxxxxxxxxx'
+    use: true
+    appid: ${alipay_appid}
+    notifyUrl: 'http://${IP}/api/user/alipay/callback'
+    merchantPrivateKey: '${alipay_private_key}'
+    alipayPublicKey: '${alipay_public_key}'
     gatewayUrl: 'https://openapi.alipay.com/gateway.do'
   paypal:
     # 如果不使用paypal，这段可以去掉

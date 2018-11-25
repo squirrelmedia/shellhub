@@ -94,6 +94,16 @@ config(){
   read -p "Input your email password:" email_password
   echo "email_password=${email_password}" >> config
 
+  # write alipay config
+  read -p "Input alipay appid:" alipay_appid
+  echo "alipay_appid=${alipay_appid}" >> config
+
+  read -p "Input alipay_private_key:" alipay_private_key
+  echo "alipay_private_key=${alipay_private_key}"
+
+  read -p "Input alipay_public_key:" alipay_public_key
+  echo "alipay_public_key=${alipay_public_key}"
+
   # generate webgui.yml
   config=`cat ./config`
   templ=`cat ./webgui.template.yml`
