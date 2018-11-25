@@ -6,5 +6,5 @@ shadowsocks:
 manager:
   address: 0.0.0.0:4001
   #这个 address 参数会让程序监听一个 tcp 端口，用于接收 webgui 发送过来的控制命令
-  password: 'password'
+  password: '${password}'
 db: 'ss.sqlite'
