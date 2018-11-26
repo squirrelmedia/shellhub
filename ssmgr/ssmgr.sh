@@ -83,7 +83,7 @@ config(){
   templ=`cat ./ss.template.yml`
   printf "$config\ncat << EOF\n$templ\nEOF" | bash > ss.yml
 
-  read -p "Install webgui(website) y/n?" webgui
+  read -p "Install webgui(website) y/n?: y" webgui
   if [[ $webgui = "y" ]]; then
     # write ip address
     echo "IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >> config
