@@ -92,7 +92,8 @@ config(){
     echo "email_username=${email_username}" >> config
 
     # write email password
-    read -p "Input your email password:" email_password
+    read -p "Input your email password:" PASSWORD
+    email_password=$PASSWORD
     echo "email_password=${email_password}" >> config
 
     # write alipay config
