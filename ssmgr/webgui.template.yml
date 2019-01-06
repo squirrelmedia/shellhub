@@ -34,8 +34,8 @@ plugins:
     gcmSenderId: '456102641793'
     gcmAPIKey: 'AAAAGzzdqrE:XXXXXXXXXXXXXX'
   webgui_telegram:
-    use: true
-    token: '586681887:AAGLyJHGESUKEm8Kr2uH5owzd8N-EGPu9g0'
+    use: false
+    token: 'xxxxxxxx'
 
   alipay:
     # 如果不使用支付宝，这段可以去掉
