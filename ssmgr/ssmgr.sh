@@ -69,6 +69,14 @@ install_shadowsocks(){
   ssserver -m aes-256-cfb -p 12345 -k abcedf --manager-address 127.0.0.1:4000 --user nobody -d start
 }
 
+# Get public IP address
+get_ip(){
+    local IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+    [ -z ${IP} ] && IP=$( wget -qO- -t1 -T2 ipv4.icanhazip.com )
+    [ -z ${IP} ] && IP=$( wget -qO- -t1 -T2 ipinfo.io/ip )
+    [ ! -z ${IP} ] && echo ${IP} || echo
+}
+
 config(){
   # download template file
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ss.template.yml
@@ -86,7 +94,7 @@ config(){
   read -p "Install webgui(website) y/n?: y" webgui
   if [[ $webgui = "y" ]]; then
     # write ip address
-    echo "IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >> config
+    echo "IP=$(get_ip)" >> config
     # write email username
     read -p "Input your email address:" email_username
     echo "email_username=${email_username}" >> config
