@@ -53,3 +53,10 @@ plugins:
     client_secret: 'EP40s6pQAZmqp_G_nrU9kKY4XaZph'
 
 db: 'webgui.sqlite'
+
+# 从 0.30 开始需要配置 redis
+redis:
+  host: '127.0.0.1'
+  port: 6379
+  password:
+  db: 0
