@@ -59,10 +59,12 @@ install_shadowsocks(){
     apt-get install dnsutils -y
     apt install net-tools -y
     apt-get install python-pip -y
+    apt-get install redis -y # install redis
   elif [[ ${PM} = "yum" ]]; then
     yum install bind-utils -y
     yum install net-tools -y
     yum install python-setuptools -y && easy_install pip
+    yum install redis -y # install redis
   fi
   pip install shadowsocks
   # start ssserver and run manager background
@@ -140,6 +142,10 @@ go_workspace(){
   cd ~/.ssmgr/
 }
 
+run_redis(){
+  nohup redis-server &
+}
+
 main(){
   #check root permission
   isRoot=$( isRoot )
@@ -151,6 +157,7 @@ main(){
     install_shadowsocks
     install_ssmgr
     config
+    run_redis
     run_ssgmr
   fi
 }
