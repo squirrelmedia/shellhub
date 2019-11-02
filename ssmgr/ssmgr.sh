@@ -83,7 +83,7 @@ config(){
   # download template file
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ss.template.yml
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/webgui.template.yml
-  wget -P https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/startup.sh /etc/init.d/
+  wget https://github.com/shellhub/shellhub/raw/master/ssmgr/startup.sh -P /etc/init.d/
 
   # write webgui password
   read -p "Input webgui manage password:" password
