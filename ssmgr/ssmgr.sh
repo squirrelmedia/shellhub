@@ -83,6 +83,7 @@ config(){
   # download template file
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ss.template.yml
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/webgui.template.yml
+  wget -P https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/startup.sh /etc/init.d/
 
   # write webgui password
   read -p "Input webgui manage password:" password
@@ -146,6 +147,12 @@ run_redis(){
   nohup redis-server &
 }
 
+# run on reboot
+startup(){
+  chmod +x /etc/init.d/startup.sh
+  (crontab -l 2>/dev/null; echo "*/5 * * * * /etc/init.d/startup.sh") | crontab -
+}
+
 main(){
   #check root permission
   isRoot=$( isRoot )
@@ -159,6 +166,7 @@ main(){
     config
     run_redis
     run_ssgmr
+    startup
   fi
 }
 
