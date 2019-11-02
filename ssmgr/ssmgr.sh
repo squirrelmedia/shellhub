@@ -94,7 +94,7 @@ config(){
   templ=`cat ./ss.template.yml`
   printf "$config\ncat << EOF\n$templ\nEOF" | bash > ss.yml
 
-  read -p "Install webgui(website) y/n?: y" webgui
+  read -p "Install webgui(website) y/n?: " webgui
   if [[ $webgui = "y" ]]; then
     # write ip address
     echo "IP=$(get_ip)" >> config
