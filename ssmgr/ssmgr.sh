@@ -53,18 +53,15 @@ init_release(){
 install_shadowsocks(){
   # init package manager
   init_release
-  echo ${PM}
   #statements
   if [[ ${PM} = "apt" ]]; then
     apt-get install dnsutils -y
     apt install net-tools -y
     apt-get install python-pip -y
-    apt-get install redis -y # install redis
   elif [[ ${PM} = "yum" ]]; then
     yum install bind-utils -y
     yum install net-tools -y
     yum install python-setuptools -y && easy_install pip
-    yum install redis -y # install redis
   fi
   pip install shadowsocks
   # start ssserver and run manager background
@@ -144,7 +141,16 @@ go_workspace(){
 }
 
 run_redis(){
-  nohup redis-server &
+  if [[ ${PM} = "apt" ]]; then
+    apt-get install redis -y # install redis
+    nohup redis-server &
+  elif [[ ${PM} = "yum" ]]; then
+    yum install epel-release -y
+    yum update -y
+    yum install redis -y
+    systemctl start redis
+    systemctl enable redis
+  fi
 }
 
 # run on reboot
