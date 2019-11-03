@@ -66,6 +66,7 @@ install_shadowsocks(){
   pip install shadowsocks
   # start ssserver and run manager background
   ssserver -m aes-256-cfb -p 12345 -k abcedf --manager-address 127.0.0.1:4000 --user nobody -d start
+  echo "ssserver -m aes-256-cfb -p 12345 -k abcedf --manager-address 127.0.0.1:4000 --user nobody -d start" >> /etc/rc.local # run on reboot
 }
 
 # Get public IP address
@@ -80,7 +81,6 @@ config(){
   # download template file
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ss.template.yml
   wget https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/webgui.template.yml
-  wget https://github.com/shellhub/shellhub/raw/master/ssmgr/startup.sh -P /etc/init.d/
 
   # write webgui password
   read -p "Input webgui manage password:" password
