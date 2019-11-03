@@ -172,6 +172,7 @@ main(){
     config
     run_redis
     run_ssgmr
+    systemctl stop firewalld # stop firewall
     startup
   fi
 }
