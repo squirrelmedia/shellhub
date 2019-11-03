@@ -133,6 +133,7 @@ run_ssgmr(){
   npm i -g pm2
   pm2 --name "ss" -f start ssmgr -x -- -c ss.yml
   pm2 --name "webgui" -f start ssmgr -x -- -c webgui.yml
+  pm2 save && pm2 startup # startup on reboot
 }
 
 go_workspace(){
@@ -153,12 +154,6 @@ run_redis(){
   fi
 }
 
-# run on reboot
-startup(){
-  chmod +x /etc/init.d/startup.sh
-  (crontab -l 2>/dev/null; echo "*/5 * * * * /etc/init.d/startup.sh") | crontab -
-}
-
 main(){
   #check root permission
   isRoot=$( isRoot )
@@ -173,7 +168,7 @@ main(){
     run_redis
     run_ssgmr
     systemctl stop firewalld # stop firewall
-    startup
+    systemctl disable firewalld
   fi
 }
 
