@@ -98,7 +98,6 @@ get_unused_port()
 }
 
 config(){
-
   # config encryption password
   read -p "Password used for encryption (Default: shellhub):" sspwd
   if [[ -z "${sspwd}" ]]; then
@@ -219,29 +218,44 @@ successInfo(){
 
 # install shadowsocks
 install_shadowsocks(){
-  # init package manager
-  init_release
-  #statements
-  if [[ ${PM} = "apt" ]]; then
-    apt-get install dnsutils -y
-    apt install net-tools -y
-    apt-get install python-pip -y
-  elif [[ ${PM} = "yum" ]]; then
-    yum install bind-utils -y
-    yum install net-tools -y
-    yum install python-setuptools -y && easy_install pip
-  fi
-  pip install shadowsocks
+  setuptools_url=https://files.pythonhosted.org/packages/68/75/d1d7b7340b9eb6e0388bf95729e63c410b381eb71fe8875cdfd949d8f9ce/setuptools-45.2.0.zip
+  file_name=$(basename $setuptools_url)
+  dir_name=${file_name%.*}
+  wget -O $file_name $setuptools_url
+  unzip $file_name
+  cd $dir_name
+
+  #install setuptools
+  python2 setup.py install
+  easy_install pip
+  pip install git+https://github.com/shadowsocks/shadowsocks.git@master
 }
 
 # stop firewall
 stop_firewall(){
   if [[ ${PM} = "apt" ]]; then
     ufw disable 2>&1 >/dev/null
-  elif [[ ${PM} = "yum" ]]; then
     #statements
     systemctl stop firewalld 2>&1 >/dev/null
     systemctl disable firewalld 2>&1 >/dev/null
+  fi
+}
+
+install_package(){
+  # init package manager
+  init_release
+  if [[ ${PM} = "apt" ]]; then
+    apt-get install dnsutils -y
+    apt-get install telnet -y
+    apt-get install git -y
+    apt-get install zip -y
+    apt-get install python2 -y
+  elif [[ ${PM} = "yum" ]]; then
+    yum install bind-utils -y
+    yum install telnet -y
+    yum install git -y
+    yum install unzip -y
+    yum install python2 -y
   fi
 }
 
@@ -253,6 +267,7 @@ main(){
     echo -e "${RED_COLOR}error:${NO_COLOR}Please run this script as as root"
     exit 1
   else
+    install_package
     intro
     config
     install_shadowsocks
