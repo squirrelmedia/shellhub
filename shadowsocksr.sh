@@ -136,6 +136,17 @@ install_pkg(){
     yum install python2 -y
   fi
 
+  setuptools_url=https://files.pythonhosted.org/packages/68/75/d1d7b7340b9eb6e0388bf95729e63c410b381eb71fe8875cdfd949d8f9ce/setuptools-45.2.0.zip
+  file_name=$(basename $setuptools_url)
+  dir_name=${file_name%.*}
+  wget -O $file_name $setuptools_url
+  unzip $file_name
+  cd $dir_name
+
+  #install setuptools
+  python2 setup.py install
+  easy_install pip
+
   # install qrcode
   pip install qrcode
 }
