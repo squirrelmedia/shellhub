@@ -9,7 +9,7 @@ intro() {
   echo
   echo "*******************************************************************"
   echo "* System      : CentOS + Debian + Ubuntu                          *"
-  echo "* Description : ShadowsocksR Install Script(Support Google BBR)   *"  
+  echo "* Description : ShadowsocksR Install Script(Support Google BBR)   *"
   echo "* Author      : https://github.com/shellhub                       *"
   echo "*******************************************************************"
   echo
@@ -68,7 +68,7 @@ protocols=(
   auth_chain_b
 )
 
-# Obfuscation 
+# Obfuscation
 obfuscation=(
   plain
   http_simple
@@ -290,8 +290,8 @@ main(){
     exit 1
   fi
   install_pkg
-  intro
   enable_bbr
+  intro
   config_run
   successInfo
 }
