@@ -1,7 +1,3 @@
-![](https://img.shields.io/badge/language-bash-b07219.svg?label=Language&logo=shell)
-[![Contributions](https://img.shields.io/static/v1.svg?label=Contributions&message=Welcome&color=0059b3)](https://github.com/shellhub/shellhub/blob/master/CONTRIBUTING.md)&nbsp;
-![](https://img.shields.io/github/repo-size/shellhub/shellhub.svg?label=Repo%20size)&nbsp;
-
 ## You can run from Gitpod online IDE
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/shellhub/shellhub)&nbsp;
 
@@ -24,12 +20,6 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/shellhub/shellh
 ``` bash
 wget -N --no-check-certificate https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ssmgr.sh && chmod +x ssmgr.sh && ./ssmgr.sh
 ```
-
-Third party
-
-* [docker](docker)
-* [docker-compose](docker-compose)
-* [oh-my-zsh](oh-my-zsh)
 
 ## Donations
 
