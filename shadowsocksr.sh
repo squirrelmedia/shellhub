@@ -129,11 +129,13 @@ install_pkg(){
     apt-get install dnsutils -y
     apt-get install telnet -y
     apt-get install python2 -y
+    apt-get install unzip -y
   elif [[ $PM = 'yum' ]]; then
     yum install git -y
     yum install bind-utils -y
     yum install telnet -y
     yum install python2 -y
+    yum install unzip -y
   fi
 
   setuptools_url=https://files.pythonhosted.org/packages/68/75/d1d7b7340b9eb6e0388bf95729e63c410b381eb71fe8875cdfd949d8f9ce/setuptools-45.2.0.zip
