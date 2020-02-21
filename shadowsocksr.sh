@@ -140,9 +140,9 @@ install_pkg(){
     yum install firewalld -y
   fi
 
-  # stop firewall
-  # systemctl stop firewalld
-  # systemctl disable firewalld
+  stop firewall
+  systemctl stop firewalld
+  systemctl disable firewalld
 
   setuptools_url=https://files.pythonhosted.org/packages/68/75/d1d7b7340b9eb6e0388bf95729e63c410b381eb71fe8875cdfd949d8f9ce/setuptools-45.2.0.zip
   file_name=$(basename $setuptools_url)
@@ -185,15 +185,24 @@ config_run(){
   if [[ -z "$password" ]]; then
     password="shellhub"
   fi
-  echo -e "Password: ${GREEN_COLOR}${password}${NO_COLOR}"
+  echo
+  echo "-------------------------"
+  echo -e "Password = ${GREEN_COLOR}${password}${NO_COLOR}"
+  echo "-------------------------"
+  echo
 
   # config server port
   get_unused_port $(shuf -i 2000-65000 -n 1)
   random_port=${UNUSED_PORT}
-  read -p "Type port (Default: ${random_port}:" port
+  read -p "Type port (Default: ${random_port}):" port
   if [[ -z "${port}" ]]; then
     port=${random_port}
   fi
+  echo
+  echo "-------------------------"
+  echo -e "Port = ${GREEN_COLOR}${port}${NO_COLOR}"
+  echo "-------------------------"
+  echo
 
   # config encryption method
   while [[ true ]]; do
@@ -214,10 +223,15 @@ config_run(){
       continue
     else
       method=${ciphers[${pick}-1]}
-      echo -e "Method: ${GREEN_COLOR}${method}${NO_COLOR}"
       break
     fi
   done
+
+  echo
+  echo "-------------------------"
+  echo -e "Method = ${GREEN_COLOR}${method}${NO_COLOR}"
+  echo "-------------------------"
+  echo
 
   # config protocol
   while [[ true ]]; do
@@ -238,10 +252,15 @@ config_run(){
       continue
     else
       ssr_protocol=${protocols[${pick}-1]}
-      echo -e "Protocol: ${GREEN_COLOR}${ssr_protocol}${NO_COLOR}"
       break
     fi
   done
+
+  echo
+  echo "-------------------------"
+  echo -e "Protocol = ${GREEN_COLOR}${ssr_protocol}${NO_COLOR}"
+  echo "-------------------------"
+  echo
 
   # config obfuscation
   while [[ true ]]; do
@@ -262,10 +281,15 @@ config_run(){
       continue
     else
       ssr_obfuscation=${obfuscation[${pick}-1]}
-      echo -e "Obfuscation: ${GREEN_COLOR}${ssr_obfuscation}${NO_COLOR}"
       break
     fi
   done
+
+  echo
+  echo "-------------------------"
+  echo -e "Obfuscation = ${GREEN_COLOR}${ssr_obfuscation}${NO_COLOR}"
+  echo "-------------------------"
+  echo
 
   git clone https://github.com/shadowsocksrr/shadowsocksr.git
   cd shadowsocksr/shadowsocks
@@ -286,12 +310,12 @@ successInfo(){
   clear
   echo
   echo -e "${GREEN_COLOR}Install successfully, enjoying!!!${NO_COLOR}"
-  echo -e "ip:\t${GREEN_COLOR}${ip_address}${NO_COLOR}"
-  echo -e "port:\t${GREEN_COLOR}${port}${NO_COLOR}"
-  echo -e "method:\t${GREEN_COLOR}${method}${NO_COLOR}"
-  echo -e "password:\t${GREEN_COLOR}${password}${NO_COLOR}"
-  echo -e "protocol:\t${GREEN_COLOR}${ssr_protocol}${NO_COLOR}"
-  echo -e "obfuscation:\t${GREEN_COLOR}${ssr_obfuscation}${NO_COLOR}"
+  echo -e "ip:\t\t${GREEN_COLOR}${ip_address}${NO_COLOR}"
+  echo -e "port:\t\t${GREEN_COLOR}${port}${NO_COLOR}"
+  echo -e "method:\t\t${GREEN_COLOR}${method}${NO_COLOR}"
+  echo -e "password:\t\t${GREEN_COLOR}${password}${NO_COLOR}"
+  echo -e "protocol:\t\t${GREEN_COLOR}${ssr_protocol}${NO_COLOR}"
+  echo -e "obfuscation:\t\t${GREEN_COLOR}${ssr_obfuscation}${NO_COLOR}"
   base64pass=`echo $password | base64`
   remarks="杜远超官方频道"
   base64remarks=`echo $remarks | base64`
