@@ -1,5 +1,3 @@
-## You can run from Gitpod online IDE
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/shellhub/shellhub)&nbsp;
 
 [MTProxy for Telegram](https://github.com/shellhub/blog/issues/12)
 ``` bash
@@ -21,7 +19,3 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/shellhub/shellh
 wget -N --no-check-certificate https://raw.githubusercontent.com/shellhub/shellhub/master/ssmgr/ssmgr.sh && chmod +x ssmgr.sh && ./ssmgr.sh
 ```
 
-## Donations
-
-You can support me by scanning following QR code. Thanks in advance.
-<div align=center><img src="donate.png" width = "300" div align=center />
