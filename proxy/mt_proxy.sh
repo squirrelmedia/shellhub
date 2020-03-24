@@ -81,14 +81,14 @@ complete()
   clear
   echo
   echo -e "${GREEN}***************************************************${NR}"
-  echo -e "* Server : ${GREEN}${IP_ADDRESS}${NR}"
-  echo -e "* Port   : ${GREEN}${SERVER_PORT}${NR}"
-  echo -e "* Secret : ${GREEN}${SECRET}${NR}"
+  echo -e "* 服务器 : ${GREEN}${IP_ADDRESS}${NR}"
+  echo -e "* 端口   : ${GREEN}${SERVER_PORT}${NR}"
+  echo -e "* 密钥 : ${GREEN}${SECRET}${NR}"
   echo -e "${GREEN}***************************************************${NR}"
   echo
-  echo -e "Here is a link to your proxy server:\n${GREEN}https://t.me/proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
+  echo -e "这是您的代理服务器的链接:\n${GREEN}https://t.me/proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
   echo
-  echo -e "And here is a direct link for those who have the Telegram app installed:\n${GREEN}tg://proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
+  echo -e "这是安装了Telegram应用程序的人的直链:\n${GREEN}tg://proxy?server=${IP_ADDRESS}&port=${SERVER_PORT}&secret=${SECRET}${NR}"
   echo -e "${GREEN}***************************************************${NR}"
   echo
 }
@@ -112,12 +112,12 @@ main()
   curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
   clear
   echo
-  read -p "Input server port (defalut: Auto Generated):" SERVER_PORT
+  read -p "设置服务器端口（默认值：自动生成）:" SERVER_PORT
   if [[ -z ${SERVER_PORT} ]]; then
     get_unused_port 1079
     SERVER_PORT=$UNUSED_PORT
   fi
-  read -p "Input secret (defalut: Auto Generated)：" SECRET
+  read -p "设置密码（默认值：自动生成）：" SECRET
   if [[ -z ${SECRET} ]]; then
     SECRET=$(head -c 16 /dev/urandom | xxd -ps)
   fi
